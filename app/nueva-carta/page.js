@@ -5,18 +5,27 @@ import { useRouter } from "next/navigation";
 export default function NuevaCarta() {
   const [form, setForm] = useState({ nombre: "", mensaje: "" });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
     try {
       const res = await fetch("/api/firestore", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: form })
       });
-      if (res.ok) router.push("/cartas");
+      if (res.ok) {
+        router.push("/cartas");
+      } else {
+        const data = await res.json();
+        setError(data.error || "Ocurrió un error al enviar la carta.");
+      }
+    } catch (err) {
+      setError("No se pudo conectar con el servidor.");
     } finally {
       setLoading(false);
     }
@@ -46,6 +55,7 @@ export default function NuevaCarta() {
       >
         {loading ? "Enviando..." : "Enviar carta"}
       </button>
+      {error && <p className="text-red-600 text-center mt-2">{error}</p>}
     </form>
   );
 }
