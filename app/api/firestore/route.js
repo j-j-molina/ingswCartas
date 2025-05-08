@@ -1,17 +1,24 @@
-import { getFirestore, collection, doc, setDoc } from "firebase/firestore";
-import app from "../../../firebase";
+import { db } from "@/firebase/firebase";
+import { collection, doc, setDoc, getDocs } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
-const firestore = getFirestore(app);
-
 export async function POST(req) {
-    const { data } = await req.json();
-    try {
-        const docRef = doc(collection(firestore, "cartas"));
-        const id = docRef.id;
-        await setDoc(docRef, { ...data, id });
-        return NextResponse.json({ id: id, ...data });
-    } catch (error) {
-        return NextResponse.json({ error: "Failed to add document " + error });
-    }
+  const { data } = await req.json();
+  try {
+    const docRef = doc(collection(db, "cartas"));
+    await setDoc(docRef, { ...data, id: docRef.id });
+    return NextResponse.json({ id: docRef.id });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  try {
+    const snapshot = await getDocs(collection(db, "cartas"));
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
