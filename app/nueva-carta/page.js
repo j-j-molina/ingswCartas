@@ -13,6 +13,7 @@ export default function NuevaCarta() {
     try {
       const res = await fetch("/api/firestore", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ data: form })
       });
       if (res.ok) router.push("/cartas");
