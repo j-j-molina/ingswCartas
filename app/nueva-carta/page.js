@@ -32,7 +32,7 @@ export default function NuevaCarta() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto bg-white p-8 rounded-xl shadow">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto bg-white p-8 rounded-xl shadow pt-12">
       <h1 className="text-2xl font-bold text-[#8B2C3B] mb-4 text-center">Nueva carta</h1>
       <input
         className="w-full border border-[#ffe6a0] rounded px-3 py-2 text-[#222] bg-[#fff8e1] placeholder:text-[#bfa77a]"

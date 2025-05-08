@@ -14,7 +14,7 @@ export default function Cartas() {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto pt-12">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#8B2C3B]">Cartas disponibles</h1>
         <Link href="/nueva-carta">
