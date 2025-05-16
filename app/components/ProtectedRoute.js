@@ -1,25 +1,26 @@
 "use client";
-import { useAuthContext } from "@/app/context/AuthContext";
+import { useAuthContext } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function ProtectedRoute({ children }) {
-    const { user, loading } = useAuthContext();
+    const { user, loading: authContextLoading } = useAuthContext(); // Obtener el estado 'loading' del contexto
     const router = useRouter();
 
     useEffect(() => {
-        if (!loading && !user) {
+        // Solo redirigir si el contexto de autenticación NO está cargando Y no hay usuario
+        if (!authContextLoading && !user) {
             router.push("/signin");
         }
-    }, [user, loading, router]);
+    }, [user, authContextLoading, router]); // Incluir authContextLoading en las dependencias
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#a13a4a]"></div>
-            </div>
-        );
+    // Si el contexto de autenticación aún está cargando, no renderizar los hijos todavía.
+    // AuthContextProvider ya muestra un indicador de carga global.
+    if (authContextLoading) {
+        return null; // O un indicador de carga específico para esta sección protegida
     }
 
-    return user ? children : null;
+    // Si la carga del contexto ha finalizado y hay un usuario, renderizar los hijos.
+    // Si la carga ha finalizado y no hay usuario, el useEffect ya habrá gestionado la redirección.
+    return <>{user ? children : null}</>;
 }

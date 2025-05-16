@@ -1,33 +1,58 @@
-import Image from "next/image";
+"use client";
+import Link from "next/link";
+import { useAuthContext } from "./context/AuthContext";
+import signOutUser from "../firebase/auth/signout";  // Only one level up needed
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-amarillo">
-      <main className="flex flex-col items-center gap-8">
-        <h1 className="text-4xl font-bold text-burdeos drop-shadow-lg text-center">
-          Cartas sin marcar
-        </h1>
-        <p className="text-lg text-negroprofundo text-center max-w-md">
-          Un lugar donde enviar cartas a la antigua
-        </p>
-        <div className="flex gap-4 mt-8">
-          <a href="/cartas">
-            <button className="px-6 py-3 rounded-full bg-burdeos text-white font-bold shadow bg-[#a13a4a] transition cursor-pointer">
-              Ver cartas disponibles
-            </button>
-          </a>
-          <a href="/nueva-carta">
-            <button className="px-6 py-3 rounded-full bg-amarillo text-burdeos font-bold shadow border border-burdeos bg-yellow-300 transition cursor-pointer">
-              Agregar nueva carta
-            </button>
-          </a>
-          <a href="/tutorial">
-            <button className="px-6 py-3 rounded-full bg-[#bfa77a] text-white font-bold shadow transition cursor-pointer">
-              Ir al tutorial
-            </button>
-          </a>
+    const { user } = useAuthContext();
+    const router = useRouter();
+
+    const handleSignOut = async () => {
+        const { error } = await signOutUser();
+        if (!error) {
+            router.push("/");
+        } else {
+            console.error("Error al cerrar sesión:", error);
+        }
+    };
+
+    return (
+        <div className="min-h-screen">
+            <div className="max-w-4xl mx-auto py-10 px-4">
+                <h1 className="text-3xl font-bold mb-8 text-[#8B2C3B] text-center">Bienvenido a Cartas Sin Marcar</h1>
+                
+                <div className="flex flex-col items-center gap-4 mt-12">
+                    {user ? (
+                        <>
+                            <Link href="/cartas">
+                                <button className="px-8 py-3 rounded-full bg-[#ffe6a0] text-[#8B2C3B] font-bold shadow-lg hover:bg-[#ffda6a] transition">
+                                    Ver Cartas
+                                </button>
+                            </Link>
+                            <button
+                                onClick={handleSignOut}
+                                className="px-8 py-3 rounded-full bg-gray-200 text-gray-700 font-bold shadow-lg hover:bg-gray-300 transition"
+                            >
+                                Cerrar sesión
+                            </button>
+                        </>
+                    ) : (
+                        <div className="flex flex-col gap-4">
+                            <Link href="/signin">
+                                <button className="px-8 py-3 rounded-full bg-[#ffe6a0] text-[#8B2C3B] font-bold shadow-lg hover:bg-[#ffda6a] transition">
+                                    Iniciar sesión
+                                </button>
+                            </Link>
+                            <Link href="/signup">
+                                <button className="px-8 py-3 rounded-full bg-[#8B2C3B] text-[#ffe6a0] font-bold shadow-lg hover:bg-[#6a1c27] transition">
+                                    Registrarse
+                                </button>
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
-      </main>
-    </div>
-  );
+    );
 }

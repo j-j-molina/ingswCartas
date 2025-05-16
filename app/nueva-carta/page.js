@@ -19,16 +19,22 @@ export default function NuevaCarta() {
         body: JSON.stringify({ data: form })
       });
       if (res.ok) {
+        console.log("Carta enviada correctamente, actualizando UI y navegando a /cartas");
+        setLoading(false); // Actualizar el estado de carga explícitamente
+        setForm({ nombre: "", mensaje: "" }); // Limpiar el formulario
         router.push("/cartas");
+        return; // Salir de la función después de iniciar la navegación
       } else {
         const data = await res.json();
         setError(data.error || "Ocurrió un error al enviar la carta.");
+        setLoading(false); // Asegurar que setLoading(false) se llama en caso de error de respuesta
       }
     } catch (err) {
       setError("No se pudo conectar con el servidor.");
-    } finally {
-      setLoading(false);
+      setLoading(false); // Asegurar que setLoading(false) se llama en caso de error de red/fetch
     }
+    // El setLoading(false) aquí abajo ya no es estrictamente necesario
+    // porque todos los caminos anteriores lo manejan o resultan en una navegación.
   };
 
   return (
